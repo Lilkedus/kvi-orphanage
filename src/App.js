@@ -5,12 +5,12 @@ import SinglePost from "./pages/SinglePost";
 import Blog from "./pages/Blog";
 import Error from "./pages/Error";
 import NavBar from './components/Navbar/NavBar';
+import FooterSection from "./components/Sections/FooterSection";
 
 function App() {
   return (
     <ChakraProvider>
       <BrowserRouter>
-        {/* <Header /> */}
         <NavBar />
         <Routes>
           <Route path="/" element={<Homepage />} />
@@ -19,6 +19,7 @@ function App() {
           <Route path="*" element={<Error />} />
         </Routes>
       </BrowserRouter>
+      <FooterSection />
     </ChakraProvider>
   );
 }

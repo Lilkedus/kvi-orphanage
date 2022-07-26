@@ -8,7 +8,9 @@ import {
     Stack,
     Text
 } from "@chakra-ui/react";
-import AboutPage from "./AboutPage";
+import AboutSection from "../components/Sections/AboutSection";
+import TestimonialsSection from "../components/Sections/TestimonialsSection";
+import ContactUsSection from "../components/Sections/ContactUsSection";
 
 export default function Homepage({
     title,
@@ -51,7 +53,7 @@ export default function Homepage({
                         lineHeight={1.5}
                         textAlign={["center", "center", "left", "left"]}
                     >
-                        The Kingdom Vision International non-profit organization was established in 2008 to improve the lives of children, families, and communities on a social, physical, economic, emotional, and political level.
+                        The Kingdom Vision International non-profit organization was established in 2008 to improve the lives of children, families, and communities on a social, physical, eomic, emotional, and political level.
                     </Heading>
                     <Link to="/donate">
                         <Button
@@ -81,7 +83,9 @@ export default function Homepage({
                     <Image src="https://i.postimg.cc/13RHQw83/image.png" size="100%" rounded="1rem" shadow="2xl" />
                 </Box>
             </Flex>
-            <AboutPage />
+            <AboutSection />
+            <TestimonialsSection />
+            <ContactUsSection />
         </div>
     );
 }
