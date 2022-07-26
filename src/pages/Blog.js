@@ -1,48 +1,3 @@
-// import { useState, useEffect } from 'react';
-// import { Link } from 'react-router-dom';
-// import client from "../client";
-
-// export default function Blog() {
-//     const [posts, setPosts] = useState([]);
-
-//     useEffect(() => {
-//         client.fetch(
-//             `*[_type == "post"] {
-//                 title,
-//                 slug,
-//                 body,
-//                 mainImage {
-//                     asset -> {
-//                         _id,
-//                         url
-//                     },
-//                     alt
-//                 }
-//             }`
-//         ).then(data => setPosts(data)).catch(err => console.error(err));
-//     }, []);
-
-
-//     return (
-//         <div>
-//             <h1>Blog</h1>
-//             <h2>You are viewing {posts.length} blog posts</h2>
-
-//             <div>
-//                 {posts.map(post => (
-//                     <article key={post.slug.current}>
-//                         <img src={post.mainImage && post.mainImage.asset && post.mainImage.asset.url} alt={post.title} />
-//                         <h4>{post.title}</h4>
-//                         <Link to={`/blog/${post.slug.current}`}>Read Full Article</Link>
-//                     </article>
-//                 ))}
-//             </div>
-//         </div>
-//     )
-// }
-
-
-
 import React, { useEffect, useState } from 'react';
 import {
     Box,
@@ -58,9 +13,11 @@ import {
     SpaceProps,
     useColorModeValue,
     Container,
-    VStack,
+    Skeleton
 } from '@chakra-ui/react';
 import client from "../client";
+import BlockContent from '@sanity/block-content-to-react';
+import axios from "axios";
 
 const BlogTags = (props) => {
     return (
@@ -82,7 +39,7 @@ export const BlogAuthor = (props) => {
             <Image
                 borderRadius="full"
                 boxSize="40px"
-                src="https://100k-faces.glitch.me/random-image"
+                src={props.image}
                 alt={`Avatar of ${props.name}`}
             />
             <Text fontWeight="medium">{props.name}</Text>
@@ -118,13 +75,11 @@ const BlogPost = (props) => {
                     </Link>
                 </Heading>
                 <Text as="p" fontSize="md" marginTop="2">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting
-                    industry. Lorem Ipsum has been the industry's standard dummy text
-                    ever since the 1500s, when an unknown printer took a galley of
-                    type and scrambled it to make a type specimen book.
+                    <BlockContent blocks={!props.loading && props.body} projectId="82l3omkv" dataset="production" />
                 </Text>
                 <BlogAuthor
                     name={props.author}
+                    image={props.authorImage}
                     date={new Date('2021-04-06T19:01:27Z')}
                 />
             </Box>
@@ -135,6 +90,8 @@ const BlogPost = (props) => {
 
 const Blog = () => {
     const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [author, setAuthor] = useState({});
 
     useEffect(() => {
         client.fetch(
@@ -148,10 +105,25 @@ const Blog = () => {
                             url
                         },
                         alt
+                    },
+                    "authorName": author->name,
+                    author {
+                        _ref
                     }
                 }`
-        ).then(data => setPosts(data)).catch(err => console.error(err));
+        ).then(data => { setPosts(data) }).catch(err => console.error(err));
+        client.fetch(`
+        *[_type == "author"] {
+            "imageUrl": image.asset->url,
+            image {
+                asset -> {
+                    _ref
+                }
+            }
+        }`).then(data => console.log(data))
     }, []);
+
+    console.log(!loading && posts[0]);
 
     return (
         <Container maxW={'8xl'} p="12">
@@ -177,10 +149,10 @@ const Blog = () => {
                             <Link textDecoration="none" _hover={{ textDecoration: 'none' }}>
                                 <Image
                                     borderRadius="lg"
-                                    src={
-                                        'https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=800&q=80'
-                                    }
-                                    alt="some good alt text"
+                                    maxWidth="30rem"
+                                    boxShadow="md"
+                                    src={!loading && posts[0].mainImage.asset.url}
+                                    alt={!loading && posts[0].title}
                                     objectFit="contain"
                                 />
                             </Link>
@@ -206,7 +178,7 @@ const Blog = () => {
                         <BlogTags tags={['Engineering', 'Product']} />
                         <Heading marginTop="1">
                             <Link textDecoration="none" _hover={{ textDecoration: 'none' }}>
-                                Blog article title
+                                {!loading && posts[0].title}
                             </Link>
                         </Heading>
                         <Text
@@ -214,26 +186,20 @@ const Blog = () => {
                             marginTop="2"
                             color={useColorModeValue('gray.700', 'gray.200')}
                             fontSize="lg">
-                            Lorem Ipsum is simply dummy text of the printing and typesetting
-                            industry. Lorem Ipsum has been the industry's standard dummy text
-                            ever since the 1500s, when an unknown printer took a galley of type
-                            and scrambled it to make a type specimen book.
                         </Text>
+                        <BlockContent blocks={!loading && posts[0].body} projectId="82l3omkv" dataset="production" />
                         <BlogAuthor name="John Doe" date={new Date('2021-04-06T19:01:27Z')} />
                     </Box>
                 </Box>
             </Box>
             {/* All Blogs */}
-            <Heading as="h2" marginTop="5">
+            <Heading as="h2" marginTop="5" color="#47A166">
                 All blog articles
             </Heading>
             <Divider marginTop="5" />
             <Wrap spacing="30px" marginTop="5">
-                <BlogPost author="John Doe" title="New Donation" image="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=800&q=80" />
-                <BlogPost author="John Doe" title="New Donation" image="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=800&q=80" />
-                <BlogPost author="John Doe" title="New Donation" image="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=800&q=80" />
                 {posts.map(post => (
-                    <BlogPost key={post.slug.current} title={post.title} author={post.authorName} image={post.mainImage && post.mainImage.asset && post.mainImage.asset.url} />
+                    <BlogPost key={post.slug.current} title={post.title} author={post.authorName} image={post.mainImage && post.mainImage.asset && post.mainImage.asset.url} body={post.body} authorImage={post.authorImage && post.authorImage.asset && post.authorImage.asset.url} loading={loading} />
                 ))}
             </Wrap>
 

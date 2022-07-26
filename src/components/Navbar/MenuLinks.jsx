@@ -2,7 +2,6 @@ import { Box, Button, Stack } from '@chakra-ui/react'
 import MenuItem from './MenuItem'
 
 export default function MenuLinks({ isOpen }) {
-    console.log(isOpen);
     return (
         <Box display={{ base: isOpen ? "block" : "none", md: "block" }}
             flexBasis={{ base: "100%", md: "auto" }}>
