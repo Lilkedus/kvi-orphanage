@@ -45,12 +45,12 @@ export default function Donate() {
                         </h2>
                         <AccordionPanel pb={4} lineHeight={6} style={{ display: "flex", justifyContent: "center", flexDirection: "column", gap: "1rem" }} fontStyle="italic">
                             <div>
-                                Comercial Bank of Ethiopia (CBE) Bole branch
+                                Comercial Bank of Ethiopia (CBE) - Bole branch
                                 <br />
                                 101010101010
                             </div>
                             <div>
-                                Comercial Bank of Ethiopia (CBE) Bole branch
+                                Dashen Bank -  CMC branch
                                 <br />
                                 101010101010
                             </div>
