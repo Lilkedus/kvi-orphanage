@@ -6,6 +6,7 @@ import Blog from "./pages/Blog";
 import Error from "./pages/Error";
 import NavBar from './components/Navbar/NavBar';
 import FooterSection from "./components/Sections/FooterSection";
+import Donate from './pages/Donate';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Homepage />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<SinglePost />} />
+          <Route path="/donate" element={<Donate />} />
           <Route path="*" element={<Error />} />
         </Routes>
       </BrowserRouter>

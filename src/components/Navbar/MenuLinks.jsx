@@ -1,4 +1,5 @@
 import { Box, Button, Stack } from '@chakra-ui/react'
+import { Link } from 'react-router-dom'
 import MenuItem from './MenuItem'
 
 export default function MenuLinks({ isOpen }) {
@@ -14,17 +15,19 @@ export default function MenuLinks({ isOpen }) {
             >
                 <MenuItem to="/">Home</MenuItem>
                 <MenuItem to="/blog">Blog</MenuItem>
-                <Button
-                    size="sm"
-                    rounded="md"
-                    color="white"
-                    bg="#47A166"
-                    _hover={{
-                        bg: ["primary.100", "primary.100", "primary.600", "primary.600"]
-                    }}
-                >
-                    Donate now
-                </Button>
+                <Link to="/donate">
+                    <Button
+                        size="sm"
+                        rounded="md"
+                        color="white"
+                        bg="#47A166"
+                        _hover={{
+                            bg: ["primary.100", "primary.100", "primary.600", "primary.600"]
+                        }}
+                    >
+                        Donate now
+                    </Button>
+                </Link>
             </Stack>
         </Box>
     )

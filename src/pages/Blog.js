@@ -11,10 +11,8 @@ import {
     Tag,
     Wrap,
     WrapItem,
-    SpaceProps,
     useColorModeValue,
     Container,
-    Skeleton
 } from '@chakra-ui/react';
 import client from "../client";
 import BlockContent from '@sanity/block-content-to-react';
@@ -24,7 +22,7 @@ const BlogTags = (props) => {
         <HStack spacing={2} marginTop={props.marginTop}>
             {props.tags.map((tag) => {
                 return (
-                    <Tag key={Math.random() * Math.PI} size={'md'} variant="solid" bg="#47A166" key={tag}>
+                    <Tag size={'md'} variant="solid" bg="#47A166" key={tag}>
                         {tag}
                     </Tag>
                 );
@@ -71,7 +69,12 @@ const BlogPost = (props) => {
                             />
                         </Link>
                     </Box>
-                    <BlogTags tags={['Engineering', 'Product']} marginTop="3" />
+                    {props.categories.map(tag => {
+                        let tags = [];
+                        tags.push(tag.title);
+                        // let equalTags = tags.length < props.categories.length;
+                        return <BlogTags tags={tags} marginTop={3} />
+                    })}
                     <Heading fontSize="xl" marginTop="2">
                         <Link textDecoration="none" _hover={{ textDecoration: 'none' }}>
                             {props.title}
@@ -85,14 +88,13 @@ const BlogPost = (props) => {
                         authorRef={props.authorRef}
                         authors={props.authors}
                         loading={props.loading}
-                        date={new Date('2021-04-06T19:01:27Z')}
+                        date={new Date(!props.loading ? props.date : "2022-07-26T17:11:44.270Z")}
                     />
                 </Box>
             </RLink>
         </WrapItem>
     );
 }
-
 
 const Blog = () => {
     const [posts, setPosts] = useState([]);
@@ -105,6 +107,7 @@ const Blog = () => {
                     title,
                     slug,
                     body,
+                    publishedAt,
                     mainImage {
                         asset -> {
                             _id,
@@ -115,6 +118,9 @@ const Blog = () => {
                     "authorName": author->name,
                     author {
                         _ref
+                    },
+                    categories[] -> {
+                        title
                     }
                 }`
         ).then(data => { setPosts(data); setLoading(false); }).catch(err => console.error(err));
@@ -145,7 +151,7 @@ const Blog = () => {
                             position="relative"
                             alignItems="center">
                             <Box
-                                width={{ base: '100%', sm: '85%' }}
+                                width="100%"
                                 zIndex="2"
                                 marginLeft={{ base: '0', sm: '5%' }}
                                 marginTop="5%">
@@ -154,6 +160,8 @@ const Blog = () => {
                                         borderRadius="lg"
                                         maxWidth="30rem"
                                         boxShadow="md"
+                                        width="full"
+
                                         src={!loading ? posts[0].mainImage.asset.url : undefined}
                                         alt={!loading ? posts[0].title : "Blog post main cover"}
                                         objectFit="contain"
@@ -178,7 +186,7 @@ const Blog = () => {
                             flexDirection="column"
                             justifyContent="center"
                             marginTop={{ base: '3', sm: '0' }}>
-                            <BlogTags tags={['Engineering', 'Product']} />
+                            {!loading && posts[0].categories.map(tag => { let tags = []; tags.push(tag.title); return <BlogTags tags={tags} /> })}
                             <Heading marginTop="1">
                                 <Link textDecoration="none" _hover={{ textDecoration: 'none' }}>
                                     {!loading && posts[0].title}
@@ -193,7 +201,7 @@ const Blog = () => {
                             <BlockContent blocks={!loading && posts[0].body} projectId="82l3omkv" dataset="production" />
                             <BlogAuthor
                                 name={!loading && posts[0].authorName}
-                                date={new Date('2021-04-06T19:01:27Z')}
+                                date={new Date(!loading ? posts[0].publishedAt : "2022-07-26T17:11:44.270Z")}
                                 authors={!loading && authors.data}
                                 authorRef={!loading && posts[0].author._ref}
                             />
@@ -218,6 +226,8 @@ const Blog = () => {
                         loading={loading}
                         authors={authors.data}
                         authorRef={post.author._ref}
+                        date={post.publishedAt}
+                        categories={post.categories}
                     />
                 ))}
             </Wrap>
